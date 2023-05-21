@@ -110,7 +110,7 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
     }
 
-    public void checkBottom() {
+    private void checkBottom() {
         for (int i = 0; i < FIGURE_SIZE; i++) {
             if (figureY[i] + UNIT_SIZE == WIN_HEIGHT) {
                 addCurrentFigureToBottom();
@@ -179,6 +179,36 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    private boolean checkLeft() {
+        for (int i = 0; i < FIGURE_SIZE; i++) {
+            if (figureX[i] <= 0)
+                return false;
+
+            for (ArrayList<Integer> figure : filledFields) {
+                if (figure.get(0) + UNIT_SIZE == figureX[i]
+                        && figure.get(1) == figureY[1]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkRight() {
+        for (int i = 0; i < FIGURE_SIZE; i++) {
+            if (figureX[i] + UNIT_SIZE >= WIN_WIDTH)
+                return false;
+
+            for (ArrayList<Integer> figure : filledFields) {
+                if (figure.get(0) == figureX[i] + UNIT_SIZE
+                        && figure.get(1) == figureY[1]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void moveFigureDown() {
         for (int i = 0; i < FIGURE_SIZE; i++) {
             figureY[i] = figureY[i] + UNIT_SIZE;
@@ -187,11 +217,13 @@ public class GamePanel extends JPanel implements ActionListener {
         checkAndRemoveRows();
     }
     private void moveFigureRight() {
+        if (!checkRight()) return;
         for (int i = 0; i < FIGURE_SIZE; i++) {
             figureX[i] = figureX[i] + UNIT_SIZE;
         }
     }
     private void moveFigureLeft() {
+        if (!checkLeft()) return;
         for (int i = 0; i < FIGURE_SIZE; i++) {
             figureX[i] = figureX[i] - UNIT_SIZE;
         }
