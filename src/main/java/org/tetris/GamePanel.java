@@ -22,6 +22,8 @@ public class GamePanel extends JPanel implements ActionListener {
     int[] figureX = new int[FIGURE_SIZE];
     int[] figureY = new int[FIGURE_SIZE];
     int figureType = 0;
+    // from 0 to 3
+    int rotation = 0;
     HashSet<ArrayList<Integer>> filledFields = new HashSet<>();
 
 
@@ -36,7 +38,6 @@ public class GamePanel extends JPanel implements ActionListener {
     private void startGame() {
         isRunning = true;
         createFigure();
-
         timer.start();
     }
 
@@ -67,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void createFigure() {
+        rotation = 0;
         createFigureByType(random.nextInt(7));
         int randomShift = random.nextInt((WIN_WIDTH / UNIT_SIZE) - FIGURE_SIZE + 1) * UNIT_SIZE;
         for (int i = 0; i < FIGURE_SIZE; i++) {
@@ -78,8 +80,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
         if (type < 0) {
             type = 0;
-        } else if (type > 7) {
-            type = 7;
+        } else if (type > 6) {
+            type = 6;
         }
 
         figureType = type;
@@ -139,10 +141,10 @@ public class GamePanel extends JPanel implements ActionListener {
                     figureX[i] = i * UNIT_SIZE;
                     figureY[i] = 0;
                 }
-                figureX[3] = 2 * UNIT_SIZE;
-                figureY[3] = UNIT_SIZE;
                 figureX[2] = UNIT_SIZE;
                 figureY[2] = UNIT_SIZE;
+                figureX[3] = 2 * UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
                 break;
             }
 
@@ -151,10 +153,10 @@ public class GamePanel extends JPanel implements ActionListener {
                     figureX[i] = i * UNIT_SIZE;
                     figureY[i] = 0;
                 }
-                figureX[3] = UNIT_SIZE;
-                figureY[3] = UNIT_SIZE;
                 figureX[2] = 0;
                 figureY[2] = UNIT_SIZE;
+                figureX[3] = UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
                 break;
             }
         }
@@ -314,11 +316,9 @@ public class GamePanel extends JPanel implements ActionListener {
                 case KeyEvent.VK_RIGHT:
                     moveFigureRight();
                     break;
-//                case KeyEvent.VK_UP:
-//                    if(direction != 'D') {
-//                        direction = 'U';
-//                    }
-//                    break;
+                case KeyEvent.VK_UP:
+                    rotateFigure();
+                    break;
                 case KeyEvent.VK_DOWN:
                     moveFigureDown();
                     break;
@@ -331,5 +331,154 @@ public class GamePanel extends JPanel implements ActionListener {
             }
             repaint();
         }
+    }
+
+    private void rotateFigure() {
+        rotation ++;
+        if (rotation == 4) {
+            rotation = 0;
+        }
+        int[] copyX = Arrays.copyOf(figureX, FIGURE_SIZE);
+        int[] copyY = Arrays.copyOf(figureY, FIGURE_SIZE);
+        switch (figureType) {
+            case 0: {
+                switch (rotation) {
+                    case 1:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        copyX[2] -= UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        copyX[3] -= 2 * UNIT_SIZE;
+                        copyY[3] -= 2 * UNIT_SIZE;
+                        break;
+                    case 2:
+                        copyX[3] -= UNIT_SIZE;
+                        copyY[3] += 2 * UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        copyX[1] += UNIT_SIZE;
+                        copyX[0] += 2 * UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        break;
+                    case 3:
+                        copyX[3] += 2 * UNIT_SIZE;
+                        copyY[3] += 2 * UNIT_SIZE;
+                        copyX[2] += UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        break;
+                    case 0:
+                        copyX[0] -= 2 * UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        copyX[1] -= UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        copyX[3] += UNIT_SIZE;
+                        copyY[3] -= 2 * UNIT_SIZE;
+                        break;
+                }
+                break;
+            }
+            case 1: {
+                switch (rotation) {
+                    case 1:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        copyX[2] -= UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        copyY[3] -= 2 * UNIT_SIZE;
+                        break;
+                    case 2:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        copyX[2] -= UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        copyX[3] -= 2 * UNIT_SIZE;
+                        break;
+                    case 3:
+                        copyY[3] += 2 * UNIT_SIZE;
+                        copyX[2] += UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        break;
+                    case 0:
+                        copyX[3] += 2 * UNIT_SIZE;
+                        copyX[2] += UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        break;
+                }
+                break;
+            }
+            case 2: {
+                switch (rotation) {
+                    case 1:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        break;
+                    case 2:
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        copyY[3] -= 2 * UNIT_SIZE;
+                        break;
+                    case 3:
+                        copyX[2] -= UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        break;
+                    case 0:
+                        copyX[3] += UNIT_SIZE;
+                        copyY[3] += UNIT_SIZE;
+                        break;
+                }
+            }
+            break;
+            case 4: {
+                switch (rotation) {
+                    case 1:
+                    case 3:
+                        copyX[1] -= 2 * UNIT_SIZE;
+                        copyY[1] -= UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        break;
+                    case 2:
+                    case 0:
+                        copyX[1] += 2 * UNIT_SIZE;
+                        copyY[1] += UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        break;
+                }
+            }
+            break;
+            case 5: {
+                switch (rotation) {
+                    case 1:
+                    case 3:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] += 2 * UNIT_SIZE;
+                        copyX[1] += UNIT_SIZE;
+                        break;
+                    case 2:
+                    case 0:
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] -= 2 * UNIT_SIZE;
+                        copyX[1] -= UNIT_SIZE;
+                        break;
+                }
+            }
+            break;
+        }
+        for (int i = 0; i < FIGURE_SIZE; i++) {
+            for (ArrayList<Integer> figure : filledFields) {
+                if ((figure.get(0) == copyX[i] && figure.get(1) == copyY[i])
+                        || copyX[i] < 0 || copyX[i] > WIN_WIDTH
+                            || copyY[i] > WIN_HEIGHT) {
+                    return;
+                }
+            }
+        }
+
+        figureX = Arrays.copyOf(copyX, FIGURE_SIZE);
+        figureY = Arrays.copyOf(copyY, FIGURE_SIZE);
     }
 }
