@@ -13,14 +13,12 @@ public class GamePanel extends JPanel implements ActionListener {
     private static final int WIN_HEIGHT = 600;
     private static final int WIN_WIDTH = 200;
     private static final int UNIT_SIZE = 25;
-    private static final int GAME_UNITS_MAX_COUNT = (WIN_HEIGHT * WIN_WIDTH) / UNIT_SIZE;
     private static final int DELAY = 175;
     private boolean isRunning = false;
     private int score = 0;
     private final Timer timer = new Timer(DELAY, this);
     private final Random random = new Random();
     private static final int FIGURE_SIZE = 4;
-    int[][] figure = new int[FIGURE_SIZE][FIGURE_SIZE];
     int[] figureX = new int[FIGURE_SIZE];
     int[] figureY = new int[FIGURE_SIZE];
     int figureType = 0;
@@ -70,6 +68,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void createFigure() {
         createFigureByType(random.nextInt(7));
+        int randomShift = random.nextInt((WIN_WIDTH / UNIT_SIZE) - FIGURE_SIZE + 1) * UNIT_SIZE;
+        for (int i = 0; i < FIGURE_SIZE; i++) {
+            figureX[i] += randomShift;
+        }
     }
 
     private void createFigureByType(int type) {
