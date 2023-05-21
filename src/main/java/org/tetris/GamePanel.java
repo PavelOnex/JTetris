@@ -22,6 +22,7 @@ public class GamePanel extends JPanel implements ActionListener {
     int[][] figure = new int[FIGURE_SIZE][FIGURE_SIZE];
     int[] figureX = new int[FIGURE_SIZE];
     int[] figureY = new int[FIGURE_SIZE];
+    int figureType = 0;
     HashSet<ArrayList<Integer>> filledFields = new HashSet<>();
 
 
@@ -67,37 +68,91 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void createFigure() {
-        int figureLength = random.nextInt(FIGURE_SIZE) + 1;
-        if (figureLength != FIGURE_SIZE) {
-            for (int i = 0; i < figureLength; i++) {
-                figureX[i] = i * UNIT_SIZE;
-                figureY[i] = 0;
-            }
-            // TODO не работает генерация квадрата и зигзага
-//
-//            if (figureLength == 2) {
-//                int columnCount = random.nextInt(3) + 1;
-//                if (columnCount == 2) {
-//                    figureX[2] = figureX[0] + UNIT_SIZE;
-//                    figureY[2] = figureY[0] + UNIT_SIZE;
-//                    figureX[3] = figureX[1] + UNIT_SIZE;
-//                    figureY[3] = figureY[1] + UNIT_SIZE;
-//                    return;
-//                }
-//            }
-            int figureColumnPosition = random.nextInt(figureLength);
-            int columnLength = FIGURE_SIZE - figureLength;
+        createFigureByType(random.nextInt(7));
+    }
 
-            int columnCounter = 1;
-            for (int i = figureLength; i < FIGURE_SIZE; i ++) {
-                figureX[i] = figureColumnPosition * UNIT_SIZE;
-                figureY[i] = columnCounter * UNIT_SIZE;
-                columnCounter++;
+    private void createFigureByType(int type) {
+
+        if (type < 0) {
+            type = 0;
+        } else if (type > 7) {
+            type = 7;
+        }
+
+        figureType = type;
+
+        switch (type) {
+            case 0: {
+                for (int i = 0; i < FIGURE_SIZE; i++) {
+                    figureX[i] = i * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                break;
             }
-        } else {
-            for (int i = 0; i < FIGURE_SIZE; i++) {
-                figureX[i] = i * UNIT_SIZE;
-                figureY[i] = 0;
+
+            case 1: {
+                for (int i = 0; i < FIGURE_SIZE - 1; i++) {
+                    figureX[i] = i * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                figureX[3] = 2 * UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
+                break;
+            }
+
+            case 2: {
+                for (int i = 0; i < FIGURE_SIZE - 1; i++) {
+                    figureX[i] = i * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                figureX[3] = UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
+                break;
+            }
+
+            case 3: {
+                for (int i = 0; i < FIGURE_SIZE - 1; i++) {
+                    figureX[i] = i * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                figureX[3] = 0;
+                figureY[3] = UNIT_SIZE;
+                break;
+            }
+
+            case 4: {
+                for (int i = 0; i < FIGURE_SIZE - 2; i++) {
+                    figureX[i] = (1 + i) * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                figureX[2] = 0;
+                figureY[2] = UNIT_SIZE;
+                figureX[3] = UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
+                break;
+            }
+            case 5: {
+                for (int i = 0; i < FIGURE_SIZE - 2; i++) {
+                    figureX[i] = i * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                figureX[3] = 2 * UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
+                figureX[2] = UNIT_SIZE;
+                figureY[2] = UNIT_SIZE;
+                break;
+            }
+
+            case 6: {
+                for (int i = 0; i < FIGURE_SIZE - 2; i++) {
+                    figureX[i] = i * UNIT_SIZE;
+                    figureY[i] = 0;
+                }
+                figureX[3] = UNIT_SIZE;
+                figureY[3] = UNIT_SIZE;
+                figureX[2] = 0;
+                figureY[2] = UNIT_SIZE;
+                break;
             }
         }
     }
@@ -106,6 +161,9 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (isRunning) {
             moveFigureDown();
+        } else {
+            filledFields = new HashSet<>();
+            isRunning = true;
         }
         repaint();
     }
@@ -177,6 +235,19 @@ public class GamePanel extends JPanel implements ActionListener {
             coordinates.add(figureY[j]);
             filledFields.add(coordinates);
         }
+        if (isGameOver()) {
+            JOptionPane.showMessageDialog(null, "Game over!");
+        }
+    }
+
+    private boolean isGameOver() {
+        for (ArrayList<Integer> figure : filledFields) {
+            if (figure.get(1) == UNIT_SIZE) {
+                isRunning = false;
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkLeft() {
@@ -245,6 +316,12 @@ public class GamePanel extends JPanel implements ActionListener {
 //                    break;
                 case KeyEvent.VK_DOWN:
                     moveFigureDown();
+                    break;
+                case KeyEvent.VK_SPACE:
+                    if (isRunning)
+                        timer.stop();
+                    else timer.start();
+                    isRunning = !isRunning;
                     break;
             }
             repaint();
