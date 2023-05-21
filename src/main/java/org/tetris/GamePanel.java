@@ -16,9 +16,10 @@ public class GamePanel extends JPanel implements ActionListener {
     private static final int GAME_UNITS_MAX_COUNT = (WIN_HEIGHT * WIN_WIDTH) / UNIT_SIZE;
     private static final int DELAY = 175;
     private boolean isRunning = false;
-    private Timer timer = new Timer(DELAY, this);
-    private Random random = new Random();
-    private static int FIGURE_SIZE = 4;
+    private int score = 0;
+    private final Timer timer = new Timer(DELAY, this);
+    private final Random random = new Random();
+    private static final int FIGURE_SIZE = 4;
     int[][] figure = new int[FIGURE_SIZE][FIGURE_SIZE];
     int[] figureX = new int[FIGURE_SIZE];
     int[] figureY = new int[FIGURE_SIZE];
@@ -60,9 +61,9 @@ public class GamePanel extends JPanel implements ActionListener {
             graphics.fillRect(figureX[i], figureY[i], UNIT_SIZE, UNIT_SIZE);
         }
 
-        filledFields.forEach(coordinats -> {
-            Integer x = coordinats.get(0);
-            Integer y = coordinats.get(1);
+        filledFields.forEach(coordinates -> {
+            Integer x = coordinates.get(0);
+            Integer y = coordinates.get(1);
             graphics.fillRect(x, y, UNIT_SIZE, UNIT_SIZE);
         });
     }
@@ -162,6 +163,7 @@ public class GamePanel extends JPanel implements ActionListener {
         if (isRunning) {
             moveFigureDown();
         } else {
+            score = 0;
             filledFields = new HashSet<>();
             isRunning = true;
         }
@@ -202,6 +204,7 @@ public class GamePanel extends JPanel implements ActionListener {
         for (Map.Entry<Integer, HashSet<Integer>> entry : rowsFilled.entrySet()) {
             // if row is filled - removing it and shifting the others
             if (entry.getValue().size() == WIN_WIDTH / UNIT_SIZE) {
+                score += 1;
                 HashSet<ArrayList<Integer>> recordsToRemove = new HashSet<>();
                 HashSet<ArrayList<Integer>> recordsToInsertAfterChanging = new HashSet<>();
                 filledFields.forEach(field -> {
@@ -236,7 +239,7 @@ public class GamePanel extends JPanel implements ActionListener {
             filledFields.add(coordinates);
         }
         if (isGameOver()) {
-            JOptionPane.showMessageDialog(null, "Game over!");
+            JOptionPane.showMessageDialog(null, "Game over!\nYour score is: " + score);
         }
     }
 
