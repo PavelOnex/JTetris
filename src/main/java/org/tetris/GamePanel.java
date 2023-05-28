@@ -77,13 +77,11 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void createFigureByType(int type) {
-
         if (type < 0) {
             type = 0;
         } else if (type > 6) {
             type = 6;
         }
-
         figureType = type;
 
         switch (type) {
@@ -174,7 +172,7 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
     }
 
-    private void checkBottom() {
+    private void checkBottomAndCreateNewFigure() {
         for (int i = 0; i < FIGURE_SIZE; i++) {
             if (figureY[i] + UNIT_SIZE == WIN_HEIGHT) {
                 addCurrentFigureToBottom();
@@ -291,7 +289,7 @@ public class GamePanel extends JPanel implements ActionListener {
         for (int i = 0; i < FIGURE_SIZE; i++) {
             figureY[i] = figureY[i] + UNIT_SIZE;
         }
-        checkBottom();
+        checkBottomAndCreateNewFigure();
         checkAndRemoveRows();
     }
     private void moveFigureRight() {
@@ -433,6 +431,39 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
             break;
+            case 3: {
+                switch (rotation) {
+                    case 1:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        copyX[2] -= UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        copyX[3] += 2 * UNIT_SIZE;
+                        break;
+                    case 2:
+                        copyX[0] += UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        copyX[2] -= UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        copyY[3] -= 2 * UNIT_SIZE;
+                        break;
+                    case 3:
+                        copyX[3] -= 2 * UNIT_SIZE;
+                        copyX[2] += UNIT_SIZE;
+                        copyY[2] += UNIT_SIZE;
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] -= UNIT_SIZE;
+                        break;
+                    case 0:
+                        copyY[3] += 2 * UNIT_SIZE;
+                        copyX[2] += UNIT_SIZE;
+                        copyY[2] -= UNIT_SIZE;
+                        copyX[0] -= UNIT_SIZE;
+                        copyY[0] += UNIT_SIZE;
+                        break;
+                }
+                break;
+            }
             case 4: {
                 switch (rotation) {
                     case 1:
